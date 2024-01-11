@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    #canvasContainer {
+      display: flex;
+      flex-wrap: wrap;
+    }
+
+    canvas {
+      border: 1px solid black;
+      margin: 10px;
+    }
+  </style>
+  <title>Shapes on Canvas</title>
+</head>
+<body>
+
+<div id="canvasContainer"></div>
+
+<script>
+// Array of shapes
+var shapes = [
+  { type: 'rectangle', width: 50, height: 50, color: 'blue' },
+  { type: 'circle', radius: 30, color: 'red' },
+  { type: 'triangle', sideLength: 50, color: 'green' },
+  { type: 'line', startX: 10, startY: 10, endX: 60, endY: 60, color: 'purple' },
+  { type: 'ellipse', radiusX: 30, radiusY: 20, color: 'orange' },
+  { type: 'pentagon', sideLength: 40, color: 'brown' },
+  { type: 'star', outerRadius: 25, innerRadius: 10, color: 'yellow' },
+  { type: 'hexagon', sideLength: 40, color: 'cyan' },
+  { type: 'octagon', sideLength: 30, color: 'pink' },
+  // Add more shapes as needed
+];
+
+// Function to draw a shape on the canvas
+function drawShape(ctx, shape) {
+  ctx.fillStyle = shape.color;
+  ctx.strokeStyle = shape.color;
+  ctx.beginPath();
+
+  switch (shape.type) {
+    case 'rectangle':
+      ctx.fillRect(0, 0, shape.width, shape.height);
+      break;
+    case 'circle':
+      ctx.arc(shape.radius, shape.radius, shape.radius, 0, 2 * Math.PI);
+      ctx.fill();
+      break;
+    case 'triangle':
+      ctx.moveTo(shape.sideLength / 2, 0);
+      ctx.lineTo(0, shape.sideLength);
+      ctx.lineTo(shape.sideLength, shape.sideLength);
+      ctx.closePath();
+      ctx.fill();
+      break;
+    case 'line':
+      ctx.moveTo(shape.startX, shape.startY);
+      ctx.lineTo(shape.endX, shape.endY);
+      ctx.stroke();
+      break;
+    case 'ellipse':
+      ctx.ellipse(shape.radiusX, shape.radiusY, shape.radiusX, shape.radiusY, 0, 0, 2 * Math.PI);
+      ctx.fill();
+      break;
+    case 'pentagon':
+      drawRegularPolygon(ctx, 5, shape.sideLength);
+      break;
+    case 'star':
+      drawStar(ctx, shape.outerRadius, shape.innerRadius);
+      break;
+    case 'hexagon':
+      drawRegularPolygon(ctx, 6, shape.sideLength);
+      break;
+    case 'octagon':
+      drawRegularPolygon(ctx, 8, shape.sideLength);
+      break;
+  }
+}
+
+// Function to draw a regular polygon with a specified number of sides and side length
+function drawRegularPolygon(ctx, sides, sideLength) {
+  ctx.moveTo(sideLength * Math.cos(0), sideLength * Math.sin(0));
+  for (var i = 1; i <= sides; i++) {
+    var angle = (2 * Math.PI * i) / sides;
+    ctx.lineTo(sideLength * Math.cos(angle), sideLength * Math.sin(angle));
+  }
+  ctx.closePath();
+  ctx.fill();
+}
+
+// Function to draw a star with specified outer and inner radii
+function drawStar(ctx, outerRadius, innerRadius) {
+  var angle = Math.PI / 5;
+  ctx.moveTo(outerRadius * Math.cos(0), outerRadius * Math.sin(0));
+  for (var i = 1; i <= 10; i++) {
+    var r = (i % 2 === 0) ? outerRadius : innerRadius;
+    ctx.lineTo(r * Math.cos(angle * i), r * Math.sin(angle * i));
+  }
+  ctx.closePath();
+  ctx.fill();
+}
+
+// Create a canvas for each shape
+for (var i = 0; i < shapes.length; i++) {
+  for (var j = 0; j < 5; j++) { // Create 5x5 grid of shapes
+    var canvas = document.createElement("canvas");
+    canvas.width = 100;
+    canvas.height = 100;
+
+    var ctx = canvas.getContext("2d");
+    drawShape(ctx, shapes[i]);
+
+    // Add the canvas to the container
+    document.getElementById("canvasContainer").appendChild(canvas);
+  }
+}
+</script>
+
+</body>
+</html>
